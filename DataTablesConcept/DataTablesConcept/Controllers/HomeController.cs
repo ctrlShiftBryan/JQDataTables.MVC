@@ -50,6 +50,31 @@ namespace DataTablesConcept.Controllers
             return Content(i.DataTableInitJson(request));
         }
 
+        public ActionResult Sort (DataTableSortRequest request)
+        {
+
+            //d from 2 to 4 direction = forward
+
+
+            //update id set sort = to position
+
+            //UPDATE TABLE
+            //SET Sort = @to
+            //WHERE ID = @id
+
+            //-forward
+            //UPDATE TABLE
+            //SET Sort = Sort + 1
+            //WHERE SORT >= @to AND ID <> @id AND SORT <= @from
+
+            //-backward
+            //UPDATE TABLE
+            //SET Sort = Sort + 1
+            //WHERE SORT <= @to AND ID <> @id AND SORT >= @from
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult About()
         {
             return View();
