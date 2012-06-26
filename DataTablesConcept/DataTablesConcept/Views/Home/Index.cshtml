@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@using DataTablesHelper
+@model DataTablesHelper.JQDataTablesWrapper<DataTablesConcept.Product>
+       <link href="../../Content/DataTables-1.9.1/media/css/jquery.dataTables.css" rel="stylesheet"
+             type="text/css" />    
+             
+             
+             
+<script src="../../Scripts/jquery-ui-1.8.11.js" type="text/javascript"></script>
+<script src="../../Scripts/DataTables-1.9.1/media/js/jquery.dataTables.js" type="text/javascript"></script>
+<script src="../../Scripts/jquery.dataTables.rowReordering.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var dataTable;
+    var canSort;
+
+
+    var aoColumns = @Html.Raw(Model.GetInitList.ToJson());
+    $(function () {
+
+       // aoColumns[0].bVisible = false;
+        initDT();
+        function initDT() {
+           
+        dataTable = $('#example').dataTable({
+
+            "bDestroy": true,
+            "bProcessing": true,
+            "bServerSide": true,
+            "sServerMethod": "POST",
+            "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+                var id = aData["pid"];
+                canSort = id !== undefined;
+                if(canSort)
+                $(nRow).attr("id",id);
+                return nRow;
+            },
+            "sAjaxSource": "../Home/Data",
+            "aoColumns": aoColumns
+
+        }); 
+        }
+
+        $('#order').click( function () {
+           
+            dataTable.rowReordering({ 
+                                     sURL:"../Home/Sort",
+                                     sRequestType: "POST"
+                                   });
+
+            $(this).hide();
+            $('#order-done').show();
+        });
+        
+         $('#order-done').click( function () {
+            $("tbody", dataTable).sortable("destroy");
+            initDT();
+            $(this).hide();
+            $('#order').show();
+        });
+    });
+
+   
+</script>
+
+@*<script src="../../Scripts/HomeIndex.js" type="text/javascript"></script>
+*@
+
+<div>
+    <button id="order" type="button">Order</button>
+    <button id="order-done" type="button" style="display: none;">Done</button>
+</div>
+<div>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" style="width: 960px;">
+	    <thead>
+		    <tr>
+              @foreach(var p in Model.ColumnInfos)
+              {
+                    <th>@p.FormattedName</th>          
+              }
+            </tr>
+	    </thead>
+	    <tbody>
+		
+	    </tbody>
+	    <tfoot>
+		    <tr>
+              @foreach(var p in Model.ColumnInfos)
+              {
+                    <th>@p.FormattedName</th>          
+              }
+            </tr>
+	    </tfoot>
+    </table>
+</div>
