@@ -81,8 +81,9 @@ namespace DataTablesHelper
                     sb.Append(".");
 
                 }
-            
-            sb.Append(ci.LongName);
+                sb.Append(" [");
+                sb.Append(ci.LongName);
+                sb.Append("] ");
             }
 
             var result = sb.ToString();
@@ -106,7 +107,10 @@ namespace DataTablesHelper
 
                     }
 
+                    sb.Append(" CONVERT(varchar, ");
                     sb.Append(ci.LongName);
+                    sb.Append(" )");
+                   
                     sb.Append(" like '%");
                     sb.Append(sSearch);
                     sb.Append("%' ");
