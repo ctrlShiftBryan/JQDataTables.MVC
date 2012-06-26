@@ -51,6 +51,7 @@
     <Compile Include="DataTableColumnInfo.cs" />
     <Compile Include="DataTableModelBinder.cs" />
     <Compile Include="DataTableRequest.cs" />
+    <Compile Include="DataTableSortRequest.cs" />
     <Compile Include="JQDataTableAttribute.cs" />
     <Compile Include="JQDataTablesWrapper.cs" />
     <Compile Include="JQDT.cs" />
