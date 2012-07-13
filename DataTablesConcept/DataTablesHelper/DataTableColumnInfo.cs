@@ -8,6 +8,7 @@
         public string AltName { get; set; }
         public string FormattedName { get; set; }
         public bool Hidden { get; set; }
+        public bool IsString { get; set; }
 
     }
 }

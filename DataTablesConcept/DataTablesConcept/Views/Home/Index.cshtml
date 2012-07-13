@@ -11,10 +11,18 @@
 <script src="../../Scripts/jquery-ui-1.8.11.js" type="text/javascript"></script>
 <script src="../../Scripts/DataTables-1.9.1/media/js/jquery.dataTables.js" type="text/javascript"></script>
 <script src="../../Scripts/jquery.dataTables.rowReordering.js" type="text/javascript"></script>
+<style type="text/css">
+    
+    .filterMatches {
+        color: white;
+        background: #828bff;
+        
+    }
+</style>
 <script type="text/javascript">
     var dataTable;
     var canSort;
-
+    var test;
 
     var aoColumns = @Html.Raw(Model.GetInitList.ToJson());
     $(function () {
@@ -37,6 +45,34 @@
                 return nRow;
             },
             "sAjaxSource": "../Home/Data",
+            
+            "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                var settings = this.fnSettings();
+                var str = settings.oPreviousSearch.sSearch;
+                var regex = new RegExp(str + "(?!([^<]+)?>)", 'i');
+                //for (i in aData) {
+                //    if (!!aData[i]) {  // not sure what this is for.. 
+                //        aData[i] = aData[i].replace( regex, function(matched) { return "<span class='filterMatches'>"+matched+"</span>";} );
+                //    }
+                  //              }
+
+                $('td', nRow).each(
+                    function(i, v) {
+
+
+                        var html = $(v).html();
+                        
+                        html = html.replace( regex, function(matched) { return "<span class='filterMatches'>"+matched+"</span>";} );
+
+                        $(v).html(html);
+
+                    }
+                );
+
+                return nRow;
+            },
+
+
             "aoColumns": aoColumns
 
         }); 

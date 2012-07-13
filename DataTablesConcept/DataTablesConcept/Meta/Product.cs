@@ -9,7 +9,7 @@ namespace DataTablesConcept.Meta
     public class Product
     {
 
-        [JQDT(Hidden = true)]
+        [JQDT]
         public int ProductID { get; set; }
 
         [JQDT]
@@ -29,5 +29,11 @@ namespace DataTablesConcept.Meta
 
         [JQDT(Order = 0)]
         public int Sort { get; set; }
+
+        [JQDT]
+        public decimal StandardCost { get; set; }
+
+     
+
     }
 }

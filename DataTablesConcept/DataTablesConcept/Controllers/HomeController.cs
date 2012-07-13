@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Objects;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -33,20 +34,50 @@ namespace DataTablesConcept.Controllers
 
         public ActionResult Data(DataTableRequest<Product> request)
         {
-           // request.Limit = 5;
-            request.Schema = "Production";
-            var select = request.SelectStatement;
+          //  request.Schema = "Production";
 
             var total = new DB().Products.Count();
-            var products = new DB().Products.Where(x => x.Name.Contains(request.sSearch) || String.IsNullOrEmpty(request.sSearch));
+
+
+
+
+            var orderBy = request.GetOrderClause("p");
+            var top = request.iDisplayLength;
+            var skip = request.iDisplayStart;
+            var where = request.GetEntitySQLWhereClause("p");
+
+            var queryStringBuilder = new StringBuilder();
+
+            queryStringBuilder.Append("SELECT VALUE p ");
+            queryStringBuilder.Append("FROM DB.Products AS p ");
+            
+            if(!where.Equals(""))
+            {
+                queryStringBuilder.Append("WHERE ");
+                queryStringBuilder.Append(where);
+
+            }
+
+            queryStringBuilder.Append("ORDER BY ");
+            queryStringBuilder.Append(orderBy);
+
+            var queryString = queryStringBuilder.ToString();
+
+            ObjectQuery<Product> products = new DB().CreateQuery<Product>(queryString);
+
+
             var filteredCount = products.Count();
 
-            IEnumerable<Product> list = products
-                .OrderBy(request.GetOrderClause())
-                .Skip(request.iDisplayStart)
-                .Take(request.iDisplayLength);
-            
-            var i = new JQDataTablesWrapper<Product>(list,null,total,filteredCount);
+
+
+
+            ObjectQuery<Product> productsPaged = new DB().CreateQuery<Product>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
+
+
+
+            var list = productsPaged;
+
+            var i = new JQDataTablesWrapper<Product>(list, null, total, filteredCount);
             return Content(i.DataTableInitJson(request));
         }
 

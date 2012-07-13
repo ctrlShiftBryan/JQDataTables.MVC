@@ -75,7 +75,8 @@ namespace DataTablesHelper
                                             Position = (position != int.MaxValue) ? position : pos,
                                             ShortName = abbr + count,
                                             FormattedName = info.Name.ToSpaced().Replace(" I D"," ID"),
-                                            Hidden = hidden
+                                            Hidden = hidden,
+                                            IsString = info.PropertyType == typeof(string)
                                         };
 
                     _columnInfos.Add(newColumn);
