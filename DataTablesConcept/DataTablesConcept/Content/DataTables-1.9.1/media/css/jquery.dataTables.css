@@ -1,7 +1,7 @@
 
 /*
  * Table
- */
+
 table.dataTable {
 	margin: 0 auto;
 	clear: both;
@@ -25,7 +25,7 @@ table.dataTable tfoot th {
 table.dataTable td {
 	padding: 3px 10px;
 }
-
+ */
 table.dataTable td.center,
 table.dataTable td.dataTables_empty {
 	text-align: center;

@@ -33,7 +33,7 @@
         dataTable = $('#example').dataTable({
 
             "bDestroy": true,
-            "bProcessing": true,
+            "bProcessing": false,
             "bServerSide": true,
             "sServerMethod": "POST",
             "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
@@ -140,7 +140,7 @@
     <button id="order-done" type="button" style="display: none;">Done</button>
 </div>
 <div>
-    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" style="width: 960px;">
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" >
         <thead>
             <tr>
                 @foreach(var p in Model.ColumnInfos)
@@ -165,11 +165,19 @@
                                    value="Search" 
                                    class="search_init" />
                         </div>
+                       
+                    </th>          
+                }
+            </tr>
+                 <tr>
+                @foreach(var p in Model.ColumnInfos)
+                {
+                    <th>
+                        
                         @p.FormattedName
                     </th>          
                 }
             </tr>
-
         </tfoot>
     </table>
 </div>
