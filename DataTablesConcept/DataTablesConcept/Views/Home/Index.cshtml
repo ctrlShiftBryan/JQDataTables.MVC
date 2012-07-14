@@ -22,7 +22,7 @@
     var dataTable;
     var canSort;
     var test;
-
+    var asInitVals = new Array();
     var aoColumns = @Html.Raw(Model.GetInitList.ToJson());
     $(function () {
 
@@ -94,6 +94,39 @@
             $(this).hide();
             $('#order').show();
         });
+        
+         $("tfoot input").keyup( function () {
+        /* Filter on the column (the index) of this element */
+        dataTable.fnFilter( this.value, $("tfoot input").index(this) );
+        } );
+     
+     
+     
+    /*
+     * Support functions to provide a little bit of 'user friendlyness' to the textboxes in 
+     * the footer
+     */
+    $("tfoot input").each( function (i) {
+        asInitVals[i] = this.value;
+    } );
+     
+    $("tfoot input").focus( function () {
+        if ( this.className == "search_init" )
+        {
+            this.className = "";
+            this.value = "";
+        }
+    } );
+     
+    $("tfoot input").blur( function (i) {
+        if ( this.value == "" )
+        {
+            this.className = "search_init";
+            this.value = asInitVals[$("tfoot input").index(this)];
+        }
+    } );
+
+
     });
 
    
@@ -108,24 +141,36 @@
 </div>
 <div>
     <table cellpadding="0" cellspacing="0" border="0" class="display" id="example" style="width: 960px;">
-	    <thead>
-		    <tr>
-              @foreach(var p in Model.ColumnInfos)
-              {
+        <thead>
+            <tr>
+                @foreach(var p in Model.ColumnInfos)
+                {
                     <th>@p.FormattedName</th>          
-              }
+                }
             </tr>
-	    </thead>
-	    <tbody>
+        </thead>
+        <tbody>
 		
-	    </tbody>
-	    <tfoot>
-		    <tr>
-              @foreach(var p in Model.ColumnInfos)
-              {
-                    <th>@p.FormattedName</th>          
-              }
+        </tbody>
+        <tfoot>
+            
+           
+                <tr>
+                @foreach(var p in Model.ColumnInfos)
+                {
+                    <th>
+                        <div>
+                            <input type="text" 
+                                   name="@p.ShortName" 
+                                   value="Search" 
+                                   class="search_init" />
+                        </div>
+                        @p.FormattedName
+                    </th>          
+                }
             </tr>
-	    </tfoot>
+
+        </tfoot>
     </table>
 </div>
+

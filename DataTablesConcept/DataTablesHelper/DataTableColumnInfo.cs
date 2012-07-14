@@ -10,6 +10,6 @@
         public string FormattedName { get; set; }
         public bool Hidden { get; set; }
         public bool IsString { get; set; }
-
+        public string SearchTerm { get; set; }
     }
 }

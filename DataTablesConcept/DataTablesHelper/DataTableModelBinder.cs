@@ -32,6 +32,22 @@ namespace DataTablesHelper
                 }
               
             }
+
+            var seachCols = request.Form.AllKeys.Where(x => x.Contains("sSearch_"));
+            foreach (var s in seachCols)
+            {
+
+                var value = request.Form.Get(s);
+                if (value != "")
+                {
+                    var index = s.Replace("sSearch_", "");
+
+                    var shortName = request.Form.Get("mDataProp_" + index);
+                    var columnInfo = m2.ColumnInfos.Single(x => x.ShortName == shortName);
+                    columnInfo.SearchTerm = value;
+                }
+            }
+
             return o;
         }
     }

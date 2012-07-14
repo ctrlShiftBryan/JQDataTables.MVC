@@ -173,37 +173,97 @@ namespace DataTablesHelper
         {
             var sb = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(sSearch))
+            if (!String.IsNullOrEmpty(sSearch) || ColumnInfos.Any(x => x.SearchTerm != ""))
             {
-                foreach (var ci in ColumnInfos)
-                {
 
+                if (!String.IsNullOrEmpty(sSearch))
+                {
+                    foreach (var ci in ColumnInfos)
+                    {
+
+                        if (ci.IsString)
+                        {
+                            sb.Append(" || ");
+
+                            if (alias != "")
+                            {
+                                sb.Append(" ");
+                                sb.Append(alias);
+                                sb.Append(".");
+                            }
+
+                            sb.Append(
+                                ci.EFName
+                                );
+
+
+
+
+                            sb.Append(" like '%");
+
+                            sb.Append(sSearch);
+                            sb.Append("%' ");
+                        }
+                        else
+                        {
+                            sb.Append(" || CAST(");
+
+
+
+                            //CAST(p.Column as System.String)
+
+                            if (alias != "")
+                            {
+                                sb.Append(" ");
+                                sb.Append(alias);
+                                sb.Append(".");
+                            }
+
+
+                            sb.Append(ci.LongName);
+
+                            sb.Append(" as System.String)");
+
+
+                            sb.Append(" like '%");
+
+                            sb.Append(sSearch);
+                            sb.Append("%' ");
+                        }
+
+
+
+                    }
+                }
+
+                foreach (var ci in ColumnInfos.Where(x => !String.IsNullOrEmpty(x.SearchTerm)))
+                {
                     if (ci.IsString)
                     {
-                        sb.Append(" || ");
+                        sb.Append(" && ");
 
-                        if(alias != "")
+                        if (alias != "")
                         {
                             sb.Append(" ");
                             sb.Append(alias);
                             sb.Append(".");
                         }
-                    
+
                         sb.Append(
                             ci.EFName
                             );
 
 
-                       
+
 
                         sb.Append(" like '%");
 
-                        sb.Append(sSearch);
+                        sb.Append(ci.SearchTerm);
                         sb.Append("%' ");
                     }
                     else
                     {
-                        sb.Append(" || CAST(");
+                        sb.Append(" && CAST(");
 
 
 
@@ -224,13 +284,26 @@ namespace DataTablesHelper
 
                         sb.Append(" like '%");
 
-                        sb.Append(sSearch);
+                        sb.Append(ci.SearchTerm);
                         sb.Append("%' ");
                     }
-
                 }
+
+
                 var result = sb.ToString();
-                return result.Substring(4, result.Length - 4);
+
+                try
+                {
+                    var r2 = result.Substring(4, result.Length - 4);
+
+                    return r2;
+                }
+                catch (Exception)
+                {
+                    
+                   
+                }
+              
             }
             return "";
 
