@@ -13,7 +13,12 @@ namespace DataTablesHelper
     public class JQDataTablesWrapper<T> : DataTableBase<T> where T : new()
     {
         public bool PreProcessed { get; private set; }
-        public JQDataTablesWrapper(IEnumerable<T> col, int? limit = null, int? totalCount = null, int? filteredCount = null) : base(new T(), limit)
+
+        public JQDataTablesWrapper(
+            IEnumerable<T> col, 
+            int? limit = null, 
+            int? totalCount = null, 
+            int? filteredCount = null) : base(new T(), limit)
 
         {
             Collection = col;

@@ -78,7 +78,6 @@
     </Compile>
     <Compile Include="Meta\Product.cs" />
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\DataTableMeta\Product.cs" />
     <Compile Include="Models\ExpandoObjectConvert.cs" />
     <Compile Include="Productp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

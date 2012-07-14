@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using DataTablesHelper;
 
 namespace DataTablesConcept
 {
@@ -11,22 +7,31 @@ namespace DataTablesConcept
     public partial class Product
     {
         
-        public string Name2 { get; set; }
-
         public String ProductSubcategoryName
         {
             get
             {
-
                 return 
                     ProductSubcategory == null ? "" :
-                    this.ProductSubcategory.Name
+
+                    ProductSubcategory.Name
                     ;
             }
-            set
+            
+        }
+
+        public String ProductCategoryName
+        {
+            get
             {
-                this.ProductSubcategory.Name = value;
+                return
+                    ProductSubcategory == null 
+                    || ProductSubcategory.ProductCategory == null ? "" :
+
+                    ProductSubcategory.ProductCategory.Name
+                    ;
             }
+            
         }
     }
 }

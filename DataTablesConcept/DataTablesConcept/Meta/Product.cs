@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using DataTablesHelper;
 
 namespace DataTablesConcept.Meta
@@ -9,11 +6,18 @@ namespace DataTablesConcept.Meta
     public class Product
     {
 
-        [JQDT]
-        public int ProductID { get; set; }
+        [JQDTChild(EFName = "ProductSubcategory.ProductCategory.Name")]
+        public String ProductCategoryName { get; set; }
+
+
+        [JQDTChild(EFName = "ProductSubcategory.Name")]
+        public String ProductSubcategoryName { get; set; }
 
         [JQDT]
         public string Name { get; set; }
+
+        [JQDT]
+        public int ProductID { get; set; }
 
         [JQDT]
         public string ProductNumber { get; set; }
@@ -33,8 +37,6 @@ namespace DataTablesConcept.Meta
         [JQDT]
         public decimal StandardCost { get; set; }
 
-        [JQDTChild(EFName = "ProductSubcategory.Name")]
-        public String ProductSubcategoryName { get; set; }
     }
 
 

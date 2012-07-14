@@ -22,11 +22,8 @@ namespace DataTablesConcept.Controllers
         {
             
 
-
+            //to do init table wrapper without list
             IEnumerable<Product> list = new DB().Products.ToList();
-
-
-          
             var i = new JQDataTablesWrapper<Product>(list);
 
             return View(i);
@@ -34,21 +31,23 @@ namespace DataTablesConcept.Controllers
 
         public ActionResult Data(DataTableRequest<Product> request)
         {
-          //  request.Schema = "Production";
-
-            var total = new DB().Products.Count();
 
 
+            var dbcontext = new DB();
 
-
+            //get total
+            var total = dbcontext.Products.Count();
+            
+            //get query string without paging
             var orderBy = request.GetOrderClause("p");
             var top = request.iDisplayLength;
             var skip = request.iDisplayStart;
             var where = request.GetEntitySQLWhereClause("p");
-
             var queryStringBuilder = new StringBuilder();
 
             queryStringBuilder.Append("SELECT VALUE p ");
+
+            //todo reflect DB.Products
             queryStringBuilder.Append("FROM DB.Products AS p ");
             
             if(!where.Equals(""))
@@ -60,24 +59,20 @@ namespace DataTablesConcept.Controllers
 
             queryStringBuilder.Append("ORDER BY ");
             queryStringBuilder.Append(orderBy);
-
             var queryString = queryStringBuilder.ToString();
 
-            ObjectQuery<Product> products = new DB().CreateQuery<Product>(queryString);
-
-
+            var products = dbcontext.CreateQuery<Product>(queryString);
+            
+            //get unpaged count
             var filteredCount = products.Count();
+            
+            //page the products
+           
 
-
-
-
-            ObjectQuery<Product> productsPaged = new DB().CreateQuery<Product>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
-
-
-
+            var productsPaged =  dbcontext.CreateQuery<Product>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
             var list = productsPaged;
-
             var i = new JQDataTablesWrapper<Product>(list, null, total, filteredCount);
+
             return Content(i.DataTableInitJson(request));
         }
 
