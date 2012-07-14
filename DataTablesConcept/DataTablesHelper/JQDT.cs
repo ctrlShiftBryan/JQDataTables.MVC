@@ -5,6 +5,13 @@ using System.Text;
 
 namespace DataTablesHelper
 {
+
+
+    public class JQDTChildAttribute : JQDT
+    {
+        public string EFName { get; set; }
+    }
+
     public class JQDT : JQDataTableAttribute
     {
         private int _order;

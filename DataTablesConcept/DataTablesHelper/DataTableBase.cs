@@ -15,22 +15,17 @@ namespace DataTablesHelper
         public DataTableBase(T col, int? limit = null)
         {
 
-            //Collection = col;
             _abbreviationCount = new Dictionary<string, int>();
-
-
             _limit = limit.HasValue ? limit.Value : 0;
-
             _columnInfos = new List<DataTableColumnInfo<T>>();
-            var t = typeof(T);
+
+            //var t = typeof(T);
             var pos = 0;
             var sb = new StringBuilder();
-
-
-
             var md = (MetadataTypeAttribute)typeof(T).GetCustomAttributes(typeof(MetadataTypeAttribute), true).Single();
             var mdt = md.MetadataClassType;
             var props = mdt.GetProperties().Where(x => x.GetCustomAttributes(typeof(JQDT), true).Length > 0);
+           // var props2 = mdt.GetProperties().Where(x => x.GetCustomAttributes(typeof(JQDTChildAttribute), true).Length > 0);
 
 
 
@@ -38,16 +33,26 @@ namespace DataTablesHelper
             int currentLimit = 0;
             foreach (var info in props)
             {
+
+               // var is2 = props2.Select(x => x.Name).ToList().Contains(info.Name);
+
                 var position = int.MaxValue;
                 var hidden = false;
+                var altName = "";
 
                 var attrs = info.GetCustomAttributes(true);
                 foreach (var jqdt in attrs.OfType<JQDT>())
                 {
                     position = jqdt.Order;
                     hidden = jqdt.Hidden;
+                    
                 }
 
+                foreach (var jqdt in attrs.OfType<JQDTChildAttribute>())
+                {
+                    altName = jqdt.EFName;
+
+                }
 
 
                 if (limit == null || currentLimit < limit)
@@ -67,8 +72,8 @@ namespace DataTablesHelper
                     var count = _abbreviationCount[abbr] > 0 ? _abbreviationCount[abbr].ToString() : "";
 
                         pos = pos + 1;
-                   
 
+                    var efname =  altName != "" ? altName : info.Name;
                     var newColumn = new DataTableColumnInfo<T>()
                                         {
                                             LongName = info.Name,
@@ -76,7 +81,8 @@ namespace DataTablesHelper
                                             ShortName = abbr + count,
                                             FormattedName = info.Name.ToSpaced().Replace(" I D"," ID"),
                                             Hidden = hidden,
-                                            IsString = info.PropertyType == typeof(string)
+                                            IsString = info.PropertyType == typeof(string),
+                                            EFName = efname
                                         };
 
                     _columnInfos.Add(newColumn);

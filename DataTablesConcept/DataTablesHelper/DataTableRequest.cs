@@ -189,7 +189,9 @@ namespace DataTablesHelper
                             sb.Append(".");
                         }
                     
-                        sb.Append(ci.LongName);
+                        sb.Append(
+                            ci.EFName
+                            );
 
 
                        

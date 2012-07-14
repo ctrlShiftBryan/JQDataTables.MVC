@@ -13,6 +13,20 @@ namespace DataTablesConcept
         
         public string Name2 { get; set; }
 
-      
+        public String ProductSubcategoryName
+        {
+            get
+            {
+
+                return 
+                    ProductSubcategory == null ? "" :
+                    this.ProductSubcategory.Name
+                    ;
+            }
+            set
+            {
+                this.ProductSubcategory.Name = value;
+            }
+        }
     }
 }

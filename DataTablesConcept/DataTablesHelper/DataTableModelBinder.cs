@@ -19,7 +19,7 @@ namespace DataTablesHelper
             {
                 var index = request.Form.Get(s);
                 var shortName = request.Form.Get("mDataProp_" + index);
-                var longName = m2.ColumnInfos.Single(x => x.ShortName == shortName).LongName;
+                var longName = m2.ColumnInfos.Single(x => x.ShortName == shortName).EFName;
                 var asc = request.Form.Get("sSortDir_" + s.Replace("iSortCol_", "")).Equals("asc");
                 try
                 {

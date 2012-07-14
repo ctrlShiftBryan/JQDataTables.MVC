@@ -7,6 +7,16 @@
     <Schema Namespace="AdventureWorks2008Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="AdventureWorks2008ModelStoreContainer">
           <EntitySet Name="Product" EntityType="AdventureWorks2008Model.Store.Product" store:Type="Tables" Schema="Production" />
+          <EntitySet Name="ProductCategory" EntityType="AdventureWorks2008Model.Store.ProductCategory" store:Type="Tables" Schema="Production" />
+          <EntitySet Name="ProductSubcategory" EntityType="AdventureWorks2008Model.Store.ProductSubcategory" store:Type="Tables" Schema="Production" />
+          <AssociationSet Name="FK_Product_ProductSubcategory" Association="AdventureWorks2008Model.Store.FK_Product_ProductSubcategory">
+            <End Role="ProductSubcategory" EntitySet="ProductSubcategory" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductSubcategory_ProductCategory" Association="AdventureWorks2008Model.Store.FK_ProductSubcategory_ProductCategory">
+            <End Role="ProductCategory" EntitySet="ProductCategory" />
+            <End Role="ProductSubcategory" EntitySet="ProductSubcategory" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Product">
           <Key>
@@ -39,12 +49,65 @@
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
           <Property Name="Sort" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="ProductCategory">
+          <Key>
+            <PropertyRef Name="ProductCategoryID" />
+          </Key>
+          <Property Name="ProductCategoryID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProductSubcategory">
+          <Key>
+            <PropertyRef Name="ProductSubcategoryID" />
+          </Key>
+          <Property Name="ProductSubcategoryID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ProductCategoryID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Product_ProductSubcategory">
+          <End Role="ProductSubcategory" Type="AdventureWorks2008Model.Store.ProductSubcategory" Multiplicity="0..1" />
+          <End Role="Product" Type="AdventureWorks2008Model.Store.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSubcategory">
+              <PropertyRef Name="ProductSubcategoryID" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="ProductSubcategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductSubcategory_ProductCategory">
+          <End Role="ProductCategory" Type="AdventureWorks2008Model.Store.ProductCategory" Multiplicity="1" />
+          <End Role="ProductSubcategory" Type="AdventureWorks2008Model.Store.ProductSubcategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductCategory">
+              <PropertyRef Name="ProductCategoryID" />
+            </Principal>
+            <Dependent Role="ProductSubcategory">
+              <PropertyRef Name="ProductCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Data" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="DB" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Products" EntityType="Data.Product" />
+          <EntitySet Name="ProductCategories" EntityType="Data.ProductCategory" />
+          <EntitySet Name="ProductSubcategories" EntityType="Data.ProductSubcategory" />
+          <AssociationSet Name="FK_Product_ProductSubcategory" Association="Data.FK_Product_ProductSubcategory">
+            <End Role="ProductSubcategory" EntitySet="ProductSubcategories" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductSubcategory_ProductCategory" Association="Data.FK_ProductSubcategory_ProductCategory">
+            <End Role="ProductCategory" EntitySet="ProductCategories" />
+            <End Role="ProductSubcategory" EntitySet="ProductSubcategories" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Product">
           <Key>
@@ -76,7 +139,54 @@
           <Property Name="rowguid" Type="Guid" Nullable="false" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" />
           <Property Type="Int32" Name="Sort" Nullable="false" />
+          <NavigationProperty Name="ProductSubcategory" Relationship="Data.FK_Product_ProductSubcategory" FromRole="Product" ToRole="ProductSubcategory" />
         </EntityType>
+        <EntityType Name="ProductCategory">
+          <Key>
+            <PropertyRef Name="ProductCategoryID" />
+          </Key>
+          <Property Type="Int32" Name="ProductCategoryID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
+          <NavigationProperty Name="ProductSubcategories" Relationship="Data.FK_ProductSubcategory_ProductCategory" FromRole="ProductCategory" ToRole="ProductSubcategory" />
+        </EntityType>
+        <EntityType Name="ProductSubcategory">
+          <Key>
+            <PropertyRef Name="ProductSubcategoryID" />
+          </Key>
+          <Property Type="Int32" Name="ProductSubcategoryID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ProductCategoryID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Guid" Name="rowguid" Nullable="false" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="Data.FK_Product_ProductSubcategory" FromRole="ProductSubcategory" ToRole="Product" />
+          <NavigationProperty Name="ProductCategory" Relationship="Data.FK_ProductSubcategory_ProductCategory" FromRole="ProductSubcategory" ToRole="ProductCategory" />
+        </EntityType>
+        <Association Name="FK_Product_ProductSubcategory">
+          <End Type="Data.ProductSubcategory" Role="ProductSubcategory" Multiplicity="0..1" />
+          <End Type="Data.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSubcategory">
+              <PropertyRef Name="ProductSubcategoryID" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="ProductSubcategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductSubcategory_ProductCategory">
+          <End Type="Data.ProductCategory" Role="ProductCategory" Multiplicity="1" />
+          <End Type="Data.ProductSubcategory" Role="ProductSubcategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductCategory">
+              <PropertyRef Name="ProductCategoryID" />
+            </Principal>
+            <Dependent Role="ProductSubcategory">
+              <PropertyRef Name="ProductCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -111,6 +221,27 @@
             <ScalarProperty Name="rowguid" ColumnName="rowguid" />
             <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ProductCategories">
+            <EntityTypeMapping TypeName="Data.ProductCategory">
+              <MappingFragment StoreEntitySet="ProductCategory">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProductCategoryID" ColumnName="ProductCategoryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductSubcategories">
+            <EntityTypeMapping TypeName="Data.ProductSubcategory">
+              <MappingFragment StoreEntitySet="ProductSubcategory">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProductCategoryID" ColumnName="ProductCategoryID" />
+                <ScalarProperty Name="ProductSubcategoryID" ColumnName="ProductSubcategoryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -131,8 +262,18 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="DB">
+      <Diagram Name="DB" ZoomLevel="82">
         <EntityTypeShape EntityType="Data.Product" Width="1.5" PointX="0.75" PointY="0.75" Height="5.8263151041666656" IsExpanded="true" />
+        <EntityTypeShape EntityType="Data.ProductCategory" Width="1.5" PointX="3.375" PointY="3" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="Data.ProductSubcategory" Width="1.5" PointX="6.375" PointY="3.5" Height="1.9802864583333322" />
+        <AssociationConnector Association="Data.FK_Product_ProductSubcategory" >
+          <ConnectorPoint PointX="6.375" PointY="5.453837890625" />
+          <ConnectorPoint PointX="2.25" PointY="5.453837890625" />
+        </AssociationConnector>
+        <AssociationConnector Association="Data.FK_ProductSubcategory_ProductCategory" >
+          <ConnectorPoint PointX="4.875" PointY="4.2401432291666667" />
+          <ConnectorPoint PointX="6.375" PointY="4.2401432291666667" />
+        </AssociationConnector>
       </Diagram>
     </Diagrams>
   </Designer>

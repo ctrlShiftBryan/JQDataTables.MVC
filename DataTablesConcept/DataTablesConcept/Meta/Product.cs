@@ -33,7 +33,9 @@ namespace DataTablesConcept.Meta
         [JQDT]
         public decimal StandardCost { get; set; }
 
-     
-
+        [JQDTChild(EFName = "ProductSubcategory.Name")]
+        public String ProductSubcategoryName { get; set; }
     }
+
+
 }
