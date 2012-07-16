@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Objects;
 using System.Linq;
 using System.Text;
 
@@ -370,6 +371,53 @@ namespace DataTablesHelper
                                            "ORDER BY RowNumber ";
                 return sqltemplate;
             }
+        }
+
+        public JQDataTablesWrapper<T> GetData(ObjectContext dbcontext)
+        {
+            var request = this;
+            string entitySQL = "SELECT VALUE Count(o.ProductId) FROM Products AS o;";
+            ObjectQuery<Int32> query = dbcontext.CreateQuery<Int32>(entitySQL);
+
+
+            var total = query.First();
+
+
+            //get query string without paging
+            var orderBy = request.GetOrderClause("p");
+            var top = request.iDisplayLength;
+            var skip = request.iDisplayStart;
+            var where = request.GetEntitySQLWhereClause("p");
+            var queryStringBuilder = new StringBuilder();
+
+            queryStringBuilder.Append("SELECT VALUE p ");
+
+            //todo reflect DB.Products
+            queryStringBuilder.Append("FROM DB.Products AS p ");
+
+            if (!where.Equals(""))
+            {
+                queryStringBuilder.Append("WHERE ");
+                queryStringBuilder.Append(where);
+
+            }
+
+            queryStringBuilder.Append("ORDER BY ");
+            queryStringBuilder.Append(orderBy);
+            var queryString = queryStringBuilder.ToString();
+
+            var products = dbcontext.CreateQuery<T>(queryString);
+
+            //get unpaged count
+            var filteredCount = products.Count();
+
+            //page the products
+
+
+            var productsPaged = dbcontext.CreateQuery<T>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
+            var list = productsPaged;
+            JQDataTablesWrapper<T> i = new JQDataTablesWrapper<T>(list, null, total, filteredCount);
+            return i;
         }
     }
 }

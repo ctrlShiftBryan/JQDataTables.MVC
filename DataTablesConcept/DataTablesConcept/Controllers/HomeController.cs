@@ -33,47 +33,10 @@ namespace DataTablesConcept.Controllers
         {
 
 
-            var dbcontext = new DB();
-
-            //get total
-            var total = dbcontext.Products.Count();
-            
-            //get query string without paging
-            var orderBy = request.GetOrderClause("p");
-            var top = request.iDisplayLength;
-            var skip = request.iDisplayStart;
-            var where = request.GetEntitySQLWhereClause("p");
-            var queryStringBuilder = new StringBuilder();
-
-            queryStringBuilder.Append("SELECT VALUE p ");
-
-            //todo reflect DB.Products
-            queryStringBuilder.Append("FROM DB.Products AS p ");
-            
-            if(!where.Equals(""))
-            {
-                queryStringBuilder.Append("WHERE ");
-                queryStringBuilder.Append(where);
-
-            }
-
-            queryStringBuilder.Append("ORDER BY ");
-            queryStringBuilder.Append(orderBy);
-            var queryString = queryStringBuilder.ToString();
-
-            var products = dbcontext.CreateQuery<Product>(queryString);
-            
-            //get unpaged count
-            var filteredCount = products.Count();
-            
-            //page the products
-           
-
-            var productsPaged =  dbcontext.CreateQuery<Product>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
-            var list = productsPaged;
-            var i = new JQDataTablesWrapper<Product>(list, null, total, filteredCount);
-
-            return Content(i.DataTableInitJson(request));
+            ObjectContext dbcontext = new DB();
+            dbcontext.CreateQuery<Product>("SELECT VALUE p FROM Db.Products As p");
+            JQDataTablesWrapper<Product> i2 = request.GetData(dbcontext);
+            return Content(i2.DataTableInitJson(request));
         }
 
         public ActionResult Sort (DataTableSortRequest request)
