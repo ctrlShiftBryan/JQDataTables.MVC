@@ -20,7 +20,6 @@
 (function ($) {
 
     $.fn.rowReordering = function (options) {
-
         function _fnStartProcessingMode() {
             ///<summary>
             ///Function that starts "Processing" mode i.e. shows "Processing..." dialog while some action is executing(Default function)
@@ -50,26 +49,28 @@
             });
             return iStart;
         }
-		
-		function fnCancelSorting(tbody, properties, iLogLevel, sMessage) {
-			tbody.sortable('cancel');
-			if(iLogLevel<=properties.iLogLevel){
-				if(sMessage!= undefined){
-					properties.fnAlert(sMessage, "");
-				}else{
-					properties.fnAlert("Row cannot be moved", "");
-				}
-			}
-			properties.fnEndProcessingMode();
+
+        function fnCancelSorting(tbody, properties, iLogLevel, sMessage) {
+            tbody.sortable('cancel');
+            if (iLogLevel <= properties.iLogLevel) {
+                if (sMessage != undefined) {
+                    properties.fnAlert(sMessage, "");
+                } else {
+                    properties.fnAlert("Row cannot be moved", "");
+                }
+            }
+            properties.fnEndProcessingMode();
         }
 
         function fnGetState(sSelector, id) {
-
             var tr = $("#" + id);
+
+           
             var iCurrentPosition = oTable.fnGetData(tr[0], properties.iIndexColumn);
             var iNewPosition = -1; // fnGetStartPosition(sSelector);
             var sDirection;
             var trPrevious = tr.prev(sSelector);
+          
             if (trPrevious.length > 0) {
                 iNewPosition = parseInt(oTable.fnGetData(trPrevious[0], properties.iIndexColumn));
                 if (iNewPosition < iCurrentPosition) {
@@ -154,7 +155,7 @@
             sRequestType: "POST",
             iGroupingLevel: 0,
             fnAlert: _fnAlert,
-			iLogLevel: 1,
+            iLogLevel: 1,
             sDataGroupAttribute: "data-group",
             fnStartProcessingMode: _fnStartProcessingMode,
             fnEndProcessingMode: _fnEndProcessingMode
@@ -185,24 +186,27 @@
             $("tbody", oTable).sortable({
                 cursor: "move",
                 update: function (event, ui) {
+
                     var tbody = $(this);
+                    
                     var sSelector = "tbody tr";
                     var sGroup = "";
                     if (properties.bGroupingUsed) {
                         sGroup = $(ui.item).attr(properties.sDataGroupAttribute);
-						if(sGroup==null || sGroup==undefined){
-							fnCancelSorting(tbody, properties, 3, "Grouping row cannot be moved");
-							return;
-						}
+                        if (sGroup == null || sGroup == undefined) {
+                            fnCancelSorting(tbody, properties, 3, "Grouping row cannot be moved");
+                            return;
+                        }
                         sSelector = "tbody tr[" + properties.sDataGroupAttribute + " ='" + sGroup + "']";
                     }
 
                     var oState = fnGetState(sSelector, ui.item.context.id);
-					if(oState.iNewPosition == -1)
-					{
-						fnCancelSorting(tbody, properties,2);
-						return;
-					}
+                   
+                 
+                    if (oState.iNewPosition == -1) {
+                        fnCancelSorting(tbody, properties, 2);
+                        return;
+                    }
 
                     if (properties.sURL != null) {
                         properties.fnStartProcessingMode();
@@ -220,7 +224,7 @@
                                 properties.fnEndProcessingMode();
                             },
                             error: function (jqXHR) {
-								fnCancelSorting(tbody, properties, 1, jqXHR.statusText);
+                                fnCancelSorting(tbody, properties, 1, jqXHR.statusText);
                             }
                         });
                     } else {
@@ -238,3 +242,27 @@
 
 
 })(jQuery);
+
+
+$.fn.dataTableExt.oApi.fnFilterClear = function (oSettings) {
+    /* Remove global filter */
+    oSettings.oPreviousSearch.sSearch = "";
+
+    /* Remove the text of the global filter in the input boxes */
+    if (typeof oSettings.aanFeatures.f != 'undefined') {
+        var n = oSettings.aanFeatures.f;
+        for (var i = 0, iLen = n.length; i < iLen; i++) {
+            $('input', n[i]).val('');
+        }
+    }
+
+    /* Remove the search text for the column filters - NOTE - if you have input boxes for these
+    * filters, these will need to be reset
+    */
+    for (var i = 0, iLen = oSettings.aoPreSearchCols.length; i < iLen; i++) {
+        oSettings.aoPreSearchCols[i].sSearch = "";
+    }
+
+    /* Redraw */
+    oSettings.oApi._fnReDraw(oSettings);
+};

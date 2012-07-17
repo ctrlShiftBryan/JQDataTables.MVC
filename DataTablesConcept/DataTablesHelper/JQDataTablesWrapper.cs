@@ -15,11 +15,17 @@ namespace DataTablesHelper
         public bool PreProcessed { get; private set; }
 
         public JQDataTablesWrapper(
-            IEnumerable<T> col, 
             int? limit = null, 
             int? totalCount = null, 
             int? filteredCount = null) : base(new T(), limit)
+        {
+            Init(new List<T>(), limit, totalCount, filteredCount);
+        }
 
+        public void Init(IEnumerable<T> col,
+            int? limit = null,
+            int? totalCount = null,
+            int? filteredCount = null)
         {
             Collection = col;
 
@@ -27,7 +33,7 @@ namespace DataTablesHelper
             {
                 PreProcessed = true;
                 TotalCount = totalCount.Value;
-                FilteredCount =  filteredCount.HasValue ? filteredCount.Value : totalCount.Value;
+                FilteredCount = filteredCount.HasValue ? filteredCount.Value : totalCount.Value;
             }
             else
             {
@@ -35,6 +41,16 @@ namespace DataTablesHelper
                 TotalCount = Collection.Count();
                 FilteredCount = TotalCount;
             }
+        }
+
+        public JQDataTablesWrapper(
+            IEnumerable<T> col, 
+            int? limit = null, 
+            int? totalCount = null, 
+            int? filteredCount = null) : base(new T(), limit)
+
+        {
+           Init(col,limit,totalCount,filteredCount);
         }
 
         public IEnumerable<T> Collection { get; set; }

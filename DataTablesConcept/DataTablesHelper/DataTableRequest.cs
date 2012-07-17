@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Design.PluralizationServices;
 using System.Data.Objects;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -372,28 +374,52 @@ namespace DataTablesHelper
                 return sqltemplate;
             }
         }
+        
+        public string Table()
+        {
+            var plural = PluralizationService.CreateService(new CultureInfo("en-US"));
+            var table = plural.Pluralize(typeof (T).Name);
+
+            return table;
+        }
+
+        public string GetInitESQL()
+        {
+
+            return String.Format( "SELECT VALUE p FROM {0} p", Table());
+        }
+
 
         public JQDataTablesWrapper<T> GetData(ObjectContext dbcontext)
         {
+
+          
+
+            
+
             var request = this;
-            string entitySQL = "SELECT VALUE Count(o.ProductId) FROM Products AS o;";
-            ObjectQuery<Int32> query = dbcontext.CreateQuery<Int32>(entitySQL);
+            var entitySQL = String.Format("SELECT VALUE Count(1) FROM {0} AS x;", Table());
+
+
+            var query = dbcontext.CreateQuery<Int32>(entitySQL);
 
 
             var total = query.First();
 
 
             //get query string without paging
-            var orderBy = request.GetOrderClause("p");
+            var orderBy = request.GetOrderClause("x");
             var top = request.iDisplayLength;
             var skip = request.iDisplayStart;
-            var where = request.GetEntitySQLWhereClause("p");
+            var where = request.GetEntitySQLWhereClause("x");
             var queryStringBuilder = new StringBuilder();
 
-            queryStringBuilder.Append("SELECT VALUE p ");
+            queryStringBuilder.Append("SELECT VALUE x ");
 
             //todo reflect DB.Products
-            queryStringBuilder.Append("FROM DB.Products AS p ");
+            queryStringBuilder.Append(
+                String.Format("FROM {0} AS x ", Table())
+                );
 
             if (!where.Equals(""))
             {
@@ -416,7 +442,7 @@ namespace DataTablesHelper
 
             var productsPaged = dbcontext.CreateQuery<T>(queryString + " SKIP " + skip.ToString() + " LIMIT " + top.ToString());
             var list = productsPaged;
-            JQDataTablesWrapper<T> i = new JQDataTablesWrapper<T>(list, null, total, filteredCount);
+            var i = new JQDataTablesWrapper<T>(list, null, total, filteredCount);
             return i;
         }
     }
