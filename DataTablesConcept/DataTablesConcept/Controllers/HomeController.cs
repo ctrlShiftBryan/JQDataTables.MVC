@@ -20,23 +20,14 @@ namespace DataTablesConcept.Controllers
     {
         public ActionResult Index()
         {
-            
-
-            //to do init table wrapper without list
-            IEnumerable<Product> list = new DB().Products.ToList();
-            var i = new JQDataTablesWrapper<Product>(list);
-
-            return View(i);
+            return View(new JQDataTablesWrapper<Product>());
         }
 
         public ActionResult Data(DataTableRequest<Product> request)
         {
-
-
-            ObjectContext dbcontext = new DB();
-            dbcontext.CreateQuery<Product>("SELECT VALUE p FROM Db.Products As p");
-            JQDataTablesWrapper<Product> i2 = request.GetData(dbcontext);
-            return Content(i2.DataTableInitJson(request));
+            var dbcontext = new DB();
+            dbcontext.CreateQuery<Product>(request.GetInitESQL());
+            return Content(request.GetData(dbcontext).DataTableInitJson(request));
         }
 
         public ActionResult Sort (DataTableSortRequest request)
